@@ -1,7 +1,15 @@
+const {ami} = require('config/ami.config')
+const AmiEvents = require('./ami.events')
+const AmiChannel = require('./ami.channel')
+
 module.exports = (socket) => {
-    // console.log('a user connected');
+    AmiEvents.Connect(socket)
+    AmiEvents.Dial(socket)
+    AmiChannel.Dial(socket)
+
+
 
     socket.on('disconnect', () => {
-        // console.log('user disconnected');
+        // ami.disconnect();
     });
 }
