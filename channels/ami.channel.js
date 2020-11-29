@@ -1,28 +1,28 @@
-const {ami} = require('config/ami.config')
-const AmiIo = require("ami-io");
+const AMIService = require('services/ami.service')
 
 const Dial = (socket) => {
-    socket.on('ami_dial', (data) => {
-        const action = new AmiIo.Action.Originate();
-        action.ActionID = 555;
-        action.Channel = 'SIP/202';
-        action.Exten = data.tel;
-        action.Context = 'sip-locals-callPermissions';
-        action.Priority = 1;
-        action.CallerID = '202';
-        action.Async = true;
-        action.WaitEvent = true;
-        action.Variable = 'ktsCallId=202'
-        action.Variable = 'ktsMyPhoneTo=903192933'
+    socket.on('ami_dial_preparation', async (data) => {
+        const lead = await AMIService.FindContactAndDial(data.tel)
+        const infoCall = await AMIService.SendCall(lead.tel)
 
-        ami.send(action, function (err, data) {
-            if (err) {
-                console.log(err)
-            } else {
-                console.log(data)
+        const response = {
+            lead,
+            info: {
+                reason: infoCall.reason,
+                channel: infoCall.channel,
+                uniqueid: infoCall.uniqueid
             }
-        });
+        }
+
+        socket.emit('ami_dial_contact', response)
     })
 }
 
-module.exports = {Dial}
+const Hangup = (socket) => {
+    socket.on('ami_hangup', async (data) => {
+        const infoHangup = await AMIService.Hangup(data.channel)
+        console.log(infoHangup)
+    })
+}
+
+module.exports = {Dial, Hangup}

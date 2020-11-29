@@ -18,10 +18,13 @@ const Connect = (socket) => {
 
     if (ami.connected)
         socket.emit(`ami_connect`, {status: 'success', message: 'success'})
-    else
-        ami.connect();
+    else {
+        ami.unref()
+        ami.connect(true);
+    }
 
     ami.on('connected', function () {
+        console.log('connected')
         socket.emit(`ami_connect`, {status: 'success', message: 'success'})
     });
 }

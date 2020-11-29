@@ -6,6 +6,7 @@ module.exports = (socket) => {
     AmiEvents.Connect(socket)
     AmiEvents.Dial(socket)
     AmiChannel.Dial(socket)
+    AmiChannel.Hangup(socket)
 
 
 
