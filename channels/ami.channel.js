@@ -1,8 +1,9 @@
 const AMIService = require('services/ami.service')
+const LeadService = require('services/lead.service')
 
 const Dial = (socket) => {
     socket.on('ami_dial_preparation', async (data) => {
-        const lead = await AMIService.FindContactAndDial(data.tel)
+        const lead = await LeadService.FindContactAndDial(data.tel)
         const infoCall = await AMIService.SendCall(lead.tel)
 
         const response = {
@@ -21,7 +22,8 @@ const Dial = (socket) => {
 const Hangup = (socket) => {
     socket.on('ami_hangup', async (data) => {
         const infoHangup = await AMIService.Hangup(data.channel)
-        console.log(infoHangup)
+        if (infoHangup.response === 'Success')
+            socket.emit('ami_hangup_response')
     })
 }
 

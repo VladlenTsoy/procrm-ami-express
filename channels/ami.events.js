@@ -1,35 +1,34 @@
 const {ami} = require('config/ami.config')
+const LeadService = require('services/lead.service')
 
 const Connect = (socket) => {
-    ami.on('incorrectServer', function () {
-        socket.emit('ami_connect', {
-            status: 'error',
-            message: "Invalid AMI welcome message. Are you sure if this is AMI?"
-        })
-    });
-
-    ami.on('connectionRefused', function () {
-        socket.emit('ami_connect', {status: 'error', message: "Connection refused."})
-    });
-
-    ami.on('incorrectLogin', function () {
-        socket.emit('ami_connect', {status: 'error', message: "Incorrect login or password."})
-    });
-
     if (ami.connected)
         socket.emit(`ami_connect`, {status: 'success', message: 'success'})
-    else {
-        ami.unref()
-        ami.connect(true);
-    }
 
+    // Подключен
     ami.on('connected', function () {
-        console.log('connected')
         socket.emit(`ami_connect`, {status: 'success', message: 'success'})
     });
+
+    ami.on('event', async function (event) {
+        // Принятый звонок
+        if (event.event === 'Newstate' && event.connectedlinenum === '202' && event.calleridnum !== '202') {
+            const lead = await LeadService.FindContactAndDial(event.calleridnum)
+            socket.emit(`ami_newstate`, {
+                lead,
+                info: {
+                    channelstate: event.channelstate,
+                    calleridnum: event.calleridnum,
+                    uniqueid: event.uniqueid,
+                    channel: event.channel,
+                },
+            })
+        }
+
+        // Сбросить звонок
+        if (event.event === 'Hangup' && event.channel.includes('SIP/202'))
+            socket.emit(`ami_event_hangup`, {})
+    })
 }
 
-const Dial = (socket) => {
-}
-
-module.exports = {Connect, Dial}
+module.exports = {Connect}

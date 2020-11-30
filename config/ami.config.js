@@ -11,6 +11,18 @@ const ami = AmiIo.createClient({
     logger: SilentLogger
 })
 
+ami.on('incorrectServer', function () {
+});
+
+ami.on('connectionRefused', function () {
+});
+
+ami.on('incorrectLogin', function () {
+});
+
+ami.unref()
+ami.connect(true);
+
 const amiSetting = (app) => {
     app.ami = ami;
 

@@ -1,29 +1,9 @@
 const {ami} = require('config/ami.config')
 const AmiIo = require("ami-io");
-const {Lead} = require('models/Lead')
-
-const FindContactAndDial = async (tel) => {
-    if (String(tel).length >= 9) {
-        const lead = await Lead.query().findOne('phonenumber', 'LIKE', `%${tel}%`)
-        return {
-            id: lead.id,
-            name: lead.name,
-            phonenumber: lead.phonenumber,
-            tel: tel,
-        }
-    }
-    return {
-        id: null,
-        name: null,
-        phonenumber: tel,
-        tel: tel,
-    }
-}
 
 const SendCall = async (phonenumber) => {
     const tel = phonenumber.length > 9 ? phonenumber.substr(phonenumber.length - 9) : phonenumber
 
-    console.log(tel)
     return new Promise((resolve) => {
         const action = new AmiIo.Action.Originate();
         action.ActionID = 555;
@@ -51,6 +31,7 @@ const Hangup = async (channel) => {
         const action = new AmiIo.Action.Hangup();
         action.ActionID = 556;
         action.Channel = channel;
+        action.Case = 16;
 
         ami.send(action, function (err, data) {
             if (err)
@@ -61,4 +42,4 @@ const Hangup = async (channel) => {
     });
 }
 
-module.exports = {FindContactAndDial, SendCall, Hangup}
+module.exports = {SendCall, Hangup}
