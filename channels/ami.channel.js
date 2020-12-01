@@ -3,8 +3,9 @@ const LeadService = require('services/lead.service')
 
 const Dial = (socket) => {
     socket.on('ami_dial_preparation', async (data) => {
+        const sip = socket.handshake.query.sip
         const lead = await LeadService.FindContactAndDial(data.tel)
-        const infoCall = await AMIService.SendCall(lead.tel)
+        const infoCall = await AMIService.SendCall(lead.tel, sip)
 
         const response = {
             lead,

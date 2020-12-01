@@ -2,6 +2,7 @@ const {ami} = require('config/ami.config')
 const LeadService = require('services/lead.service')
 
 const Connect = (socket) => {
+    const sip = socket.handshake.query.sip
     if (ami.connected)
         socket.emit(`ami_connect`, {status: 'success', message: 'success'})
 
@@ -12,7 +13,7 @@ const Connect = (socket) => {
 
     ami.on('event', async function (event) {
         // Принятый звонок
-        if (event.event === 'Newstate' && event.connectedlinenum === '202' && event.calleridnum !== '202') {
+        if (event.event === 'Newstate' && event.connectedlinenum === sip && event.calleridnum !== sip) {
             const lead = await LeadService.FindContactAndDial(event.calleridnum)
             socket.emit(`ami_newstate`, {
                 lead,
@@ -26,7 +27,7 @@ const Connect = (socket) => {
         }
 
         // Сбросить звонок
-        if (event.event === 'Hangup' && event.channel.includes('SIP/202'))
+        if (event.event === 'Hangup' && event.channel.includes('SIP/' + sip))
             socket.emit(`ami_event_hangup`, {})
     })
 }
