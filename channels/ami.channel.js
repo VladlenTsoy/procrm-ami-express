@@ -28,4 +28,12 @@ const Hangup = (socket) => {
     })
 }
 
-module.exports = {Dial, Hangup}
+const CheckStatus = (socket) => {
+    socket.on('ami_check_channel', async (data) => {
+        const status = await AMIService.CheckStatus(data.info.channel)
+        if (status.response === 'Success')
+            socket.emit('ami_newstate', data)
+    })
+}
+
+module.exports = {Dial, Hangup, CheckStatus}

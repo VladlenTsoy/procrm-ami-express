@@ -12,12 +12,15 @@ const ami = AmiIo.createClient({
 })
 
 ami.on('incorrectServer', function () {
+    console.log('incorrectServer')
 });
 
 ami.on('connectionRefused', function () {
+    console.log('connectionRefused')
 });
 
 ami.on('incorrectLogin', function () {
+    console.log('incorrectLogin')
 });
 
 ami.unref()

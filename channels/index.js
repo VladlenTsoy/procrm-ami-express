@@ -8,6 +8,7 @@ module.exports = (socket) => {
     //
     AmiChannel.Dial(socket)
     AmiChannel.Hangup(socket)
+    AmiChannel.CheckStatus(socket)
 
     socket.on('disconnect', () => {
         // ami.disconnect();

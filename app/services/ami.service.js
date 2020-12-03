@@ -1,6 +1,21 @@
 const {ami} = require('config/ami.config')
 const AmiIo = require("ami-io");
 
+const CheckStatus = (channel) => {
+    return new Promise((resolve) => {
+        const action = new AmiIo.Action.Status();
+        action.ActionID = 558;
+        action.Channel = channel;
+
+        ami.send(action, function (err, data) {
+            if (err)
+                resolve(err)
+            else
+                resolve(data)
+        });
+    });
+}
+
 const SendCall = async (phonenumber, sip) => {
     const tel = phonenumber.length > 9 ? phonenumber.substr(phonenumber.length - 9) : phonenumber
 
@@ -42,4 +57,4 @@ const Hangup = async (channel) => {
     });
 }
 
-module.exports = {SendCall, Hangup}
+module.exports = {SendCall, Hangup, CheckStatus}
