@@ -1,6 +1,6 @@
 const cors = require('cors')
 const corsConfig = cors({
-    origin: 'https://procrm.loc',
+    origin: process.env.APP_MODE === 'development' ? 'https://procrm.loc' : 'https://help.procrm.uz',
     credentials: true,
 });
 
