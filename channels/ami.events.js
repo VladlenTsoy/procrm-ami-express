@@ -11,6 +11,7 @@ const Connect = (socket) => {
         socket.emit(`ami_connect`, {status: 'success', message: 'success'})
     });
 
+    // Принятый звонок
     ami.on('event', async function (event) {
         // Принятый звонок
         if (event.event === 'Newstate' && event.connectedlinenum === sip && event.calleridnum !== sip) {
@@ -20,6 +21,20 @@ const Connect = (socket) => {
                 info: {
                     channelstate: event.channelstate,
                     calleridnum: event.calleridnum,
+                    uniqueid: event.uniqueid,
+                    channel: event.channel,
+                },
+            })
+        }
+
+        // Принятый звонок
+        if (event.event === 'Newstate' && event.connectedlinenum !== sip && event.calleridnum === sip) {
+            const lead = await LeadService.FindContactAndDial(event.connectedlinenum)
+            socket.emit(`ami_newstate`, {
+                lead,
+                info: {
+                    channelstate: event.channelstate,
+                    calleridnum: event.connectedlinenum,
                     uniqueid: event.uniqueid,
                     channel: event.channel,
                 },
