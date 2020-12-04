@@ -22,7 +22,7 @@ module.exports = {
         connection: {
             host: process.env.DB_HOST,
             database: process.env.DB_TABLE,
-            user: process.env.DB_PASSWORD,
+            user: process.env.DB_LOGIN,
             password: process.env.DB_PASSWORD,
         },
         pool: {
