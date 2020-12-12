@@ -3,7 +3,7 @@ const socket = require("socket.io");
 const socketSetting = (app) => {
     app.io = socket({
         cors: {
-            origin: process.env.APP_MODE === 'development' ? 'https://procrm.loc' : 'https://help.procrm.uz',
+            origin: process.env.APP_CORS,
             credentials: true
         }
     });

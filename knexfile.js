@@ -4,10 +4,10 @@ module.exports = {
         version: '5.8',
         jsonDatatype: 'JSON',
         connection: {
-            host: '127.0.0.1',
-            user: 'root',
-            password: 'root',
-            database: 'procrm',
+            host: process.env.DB_HOST,
+            database: process.env.DB_TABLE,
+            user: process.env.DB_LOGIN,
+            password: process.env.DB_PASSWORD,
         },
         migrations: {
             directory: `${__dirname}/database/migrations`
