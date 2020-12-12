@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "pm2 start ecosystem.config.js"
+    "start": "pm2 start ecosystem.config.js && pm2 logs",
+    "stop": "pm2 stop ecosystem.config.js"
   },
   "_moduleAliases": {
     "config": "config",
